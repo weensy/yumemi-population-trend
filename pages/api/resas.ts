@@ -5,7 +5,7 @@ export const getRESAS = async (path: string, headers = {}) => {
     const response = await fetch(baseURL + path, {
       method: 'GET',
       headers: {
-        'X-API-KEY': process.env.RESAS_API_KEY || '',
+        'X-API-KEY': process.env.NEXT_PUBLIC_RESAS_API_KEY || '',
         'Content-Type': 'application/json;charset=UTF-8',
         ...headers,
       },
