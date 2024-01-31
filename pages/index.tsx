@@ -3,7 +3,17 @@ import { useEffect, useState } from 'react'
 import { getRESAS } from '@/pages/api/resas'
 
 export default function Home() {
-  const [prefectures, setPrefectures] = useState([])
+  interface Prefecture {
+    prefCode: number
+    prefName: string
+  }
+  interface SelectedPrefectures {
+    [prefCode: number]: boolean
+  }
+
+  const [prefectures, setPrefectures] = useState<Prefecture[]>([])
+  const [selectedPrefectures, setSelectedPrefectures] = useState<SelectedPrefectures>({})
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await getRESAS('/api/v1/prefectures')
@@ -12,6 +22,19 @@ export default function Home() {
 
     fetchData()
   }, [])
+
+  const handleCheckboxChange = async (prefCode: number, isChecked: boolean) => {
+    setSelectedPrefectures((prev) => ({
+      ...prev,
+      [prefCode]: isChecked,
+    }))
+
+    if (!selectedPrefectures[prefCode]) {
+      console.log('api called')
+      // const response = await getRESAS('/api/v1/population/composition/perYear', prefCode)
+    }
+  }
+
   return (
     <>
       <Head>
@@ -19,21 +42,19 @@ export default function Home() {
       </Head>
       <main>
         <div>
-          {prefectures.map(
-            (prefecture: { prefCode: number; prefName: string }) => (
-              <div key={prefecture.prefCode}>
-                <input
-                  type="checkbox"
-                  id={`pref-${prefecture.prefCode}`}
-                  name="prefectures"
-                  value={prefecture.prefCode}
-                />
-                <label htmlFor={`pref-${prefecture.prefCode}`}>
-                  {prefecture.prefName}
-                </label>
-              </div>
-            )
-          )}
+          {prefectures.map(({ prefCode, prefName }) => (
+            <div key={prefCode}>
+              <input
+                type="checkbox"
+                id={`pref-${prefCode}`}
+                name="prefectures"
+                value={prefCode}
+                onChange={(e) => handleCheckboxChange(prefCode, e.target.checked)}
+                checked={selectedPrefectures[prefCode] || false}
+              />
+              <label htmlFor={`pref-${prefCode}`}>{prefName}</label>
+            </div>
+          ))}
         </div>
       </main>
     </>
