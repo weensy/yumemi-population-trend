@@ -1,8 +1,14 @@
 const baseURL = 'https://opendata.resas-portal.go.jp'
 
-export const getRESAS = async (path: string, headers = {}) => {
+export const getRESAS = async (
+  path: string,
+  queryParams: Record<string, string | number> = {},
+  headers = {}
+) => {
   try {
-    const response = await fetch(baseURL + path, {
+    const searchParams = new URLSearchParams(queryParams as Record<string, string>)
+    const url = `${baseURL}${path}?${searchParams.toString()}`
+    const response = await fetch(url, {
       method: 'GET',
       headers: {
         'X-API-KEY': process.env.NEXT_PUBLIC_RESAS_API_KEY || '',

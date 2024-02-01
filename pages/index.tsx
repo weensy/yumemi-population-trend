@@ -1,19 +1,24 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { getRESAS } from '@/pages/api/resas'
+import { PopulationChart } from '@/components/PopulationChart'
 
 export default function Home() {
   interface Prefecture {
     prefCode: number
     prefName: string
   }
-  interface SelectedPrefectures {
-    [prefCode: number]: boolean
+  interface PopulationData {
+    name: string
+    data: { year: number; value: number }[]
   }
 
   const [prefectures, setPrefectures] = useState<Prefecture[]>([])
-  const [selectedPrefectures, setSelectedPrefectures] = useState<SelectedPrefectures>({})
+  const [populationData, setPopulationData] = useState<PopulationData[]>([])
+  const [selectedPrefCodes, setSelectedPrefCodes] = useState<number[]>([])
+  const [selectedCategory, setSelectedCategory] = useState('総人口')
 
+  // 都道府県一覧取得
   useEffect(() => {
     const fetchData = async () => {
       const response = await getRESAS('/api/v1/prefectures')
@@ -23,15 +28,37 @@ export default function Home() {
     fetchData()
   }, [])
 
-  const handleCheckboxChange = async (prefCode: number, isChecked: boolean) => {
-    setSelectedPrefectures((prev) => ({
-      ...prev,
-      [prefCode]: isChecked,
-    }))
+  // 人口構成取得
+  useEffect(() => {
+    const fetchPopulationData = async () => {
+      const newData = await Promise.all(
+        selectedPrefCodes.map(async (code) => {
+          const response = await getRESAS('/api/v1/population/composition/perYear', {
+            prefCode: code,
+          })
+          const prefName = prefectures.find((p) => p.prefCode === code)?.prefName || ''
+          return {
+            name: prefName,
+            data: response.result.data.find((d: any) => d.label === selectedCategory).data,
+          }
+        })
+      )
+      setPopulationData(newData)
+    }
 
-    if (!selectedPrefectures[prefCode]) {
-      console.log('api called')
-      // const response = await getRESAS('/api/v1/population/composition/perYear', prefCode)
+    if (selectedPrefCodes.length > 0) {
+      fetchPopulationData()
+    } else {
+      setPopulationData([])
+    }
+  }, [selectedPrefCodes, selectedCategory, prefectures])
+
+  // Checkbox handler
+  const handleCheckboxChange = async (prefCode: number, isChecked: boolean) => {
+    if (isChecked) {
+      setSelectedPrefCodes((prev) => [...prev, prefCode])
+    } else {
+      setSelectedPrefCodes((prev) => prev.filter((code) => code !== prefCode))
     }
   }
 
@@ -50,11 +77,49 @@ export default function Home() {
                 name="prefectures"
                 value={prefCode}
                 onChange={(e) => handleCheckboxChange(prefCode, e.target.checked)}
-                checked={selectedPrefectures[prefCode] || false}
               />
               <label htmlFor={`pref-${prefCode}`}>{prefName}</label>
             </div>
           ))}
+        </div>
+        <PopulationChart data={populationData} />
+        <div>
+          <label>
+            <input
+              type="radio"
+              value="総人口"
+              checked={selectedCategory === '総人口'}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            />
+            総人口
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="年少人口"
+              checked={selectedCategory === '年少人口'}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            />
+            年少人口
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="生産年齢人口"
+              checked={selectedCategory === '生産年齢人口'}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            />
+            生産年齢人口
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="老年人口"
+              checked={selectedCategory === '老年人口'}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            />
+            老年人口
+          </label>
         </div>
       </main>
     </>
