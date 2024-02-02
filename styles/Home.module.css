@@ -1,0 +1,42 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+.container {
+  display: flex;
+  max-width: 70rem;
+  max-height: 30rem;
+  gap: 1rem;
+  width: 100%;
+}
+
+.contentLeft {
+  overflow-y: scroll;
+  border-radius: 0.2rem;
+  width: 9rem;
+}
+
+.contentRight {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.prefectures {
+  background-color: rgb(242, 242, 245);
+  border-bottom: 0.0625rem solid rgb(224, 224, 227);
+  padding: 0.5rem;
+}
+
+.prefectures:hover {
+  background-color: rgb(252, 252, 255);
+}
+
+.populationChart {
+  width: 100%;
+}

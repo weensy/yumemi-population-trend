@@ -3,7 +3,7 @@ import HighchartsReact from 'highcharts-react-official'
 import React, { useEffect, useState } from 'react'
 
 export const PopulationChart = ({ data }: any) => {
-  const [options, setOptions] = useState({})
+  const [options, setOptions] = useState({ title: null })
 
   useEffect(() => {
     if (!data || data.length === 0) return
@@ -12,9 +12,7 @@ export const PopulationChart = ({ data }: any) => {
       chart: {
         type: 'line',
       },
-      title: {
-        text: '総人口推移',
-      },
+      title: null,
       xAxis: {
         title: {
           text: '年度',

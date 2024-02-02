@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { getRESAS } from '@/pages/api/resas'
 import { PopulationChart } from '@/components/PopulationChart'
+import styles from '@/styles/Home.module.css'
 
 export default function Home() {
   interface Prefecture {
@@ -65,64 +66,71 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>総人口推移</title>
+        <title>都道府県別総人口推移</title>
         <meta name="description" content="都道府県別総人口推移グラフ" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <div>
-          {prefectures.map(({ prefCode, prefName }) => (
-            <div key={prefCode}>
-              <input
-                type="checkbox"
-                id={`pref-${prefCode}`}
-                name="prefectures"
-                value={prefCode}
-                onChange={(e) => handleCheckboxChange(prefCode, e.target.checked)}
-              />
-              <label htmlFor={`pref-${prefCode}`}>{prefName}</label>
+      <main className={styles.main}>
+        <h1>都道府県別総人口推移</h1>
+        <div className={styles.container}>
+          <div className={styles.contentLeft}>
+            {prefectures.map(({ prefCode, prefName }) => (
+              <div key={prefCode} className={styles.prefectures}>
+                <input
+                  type="checkbox"
+                  id={`pref-${prefCode}`}
+                  name="prefectures"
+                  value={prefCode}
+                  onChange={(e) => handleCheckboxChange(prefCode, e.target.checked)}
+                />
+                <label htmlFor={`pref-${prefCode}`}>{prefName}</label>
+              </div>
+            ))}
+          </div>
+          <div className={styles.contentRight}>
+            <div>
+              <label>
+                <input
+                  type="radio"
+                  value="総人口"
+                  checked={selectedCategory === '総人口'}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                />
+                総人口
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="年少人口"
+                  checked={selectedCategory === '年少人口'}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                />
+                年少人口
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="生産年齢人口"
+                  checked={selectedCategory === '生産年齢人口'}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                />
+                生産年齢人口
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="老年人口"
+                  checked={selectedCategory === '老年人口'}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                />
+                老年人口
+              </label>
             </div>
-          ))}
-        </div>
-        <PopulationChart data={populationData} />
-        <div>
-          <label>
-            <input
-              type="radio"
-              value="総人口"
-              checked={selectedCategory === '総人口'}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            />
-            総人口
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="年少人口"
-              checked={selectedCategory === '年少人口'}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            />
-            年少人口
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="生産年齢人口"
-              checked={selectedCategory === '生産年齢人口'}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            />
-            生産年齢人口
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="老年人口"
-              checked={selectedCategory === '老年人口'}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            />
-            老年人口
-          </label>
+            <div className={styles.populationChart}>
+              <PopulationChart data={populationData} />
+            </div>
+          </div>
         </div>
       </main>
     </>
