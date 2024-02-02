@@ -63,6 +63,12 @@ export default function Home() {
     }
   }
 
+  const handleDivClick = (prefCode: number) => {
+    const currentIndex = selectedPrefCodes.indexOf(prefCode)
+    const newChecked = currentIndex === -1
+    handleCheckboxChange(prefCode, newChecked)
+  }
+
   return (
     <>
       <Head>
@@ -72,24 +78,31 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <h1>都道府県別総人口推移</h1>
+        <h1 className={styles.title}>都道府県別総人口推移</h1>
         <div className={styles.container}>
           <div className={styles.contentLeft}>
             {prefectures.map(({ prefCode, prefName }) => (
-              <div key={prefCode} className={styles.prefectures}>
+              <div
+                key={prefCode}
+                className={`${styles.prefectures} ${selectedPrefCodes.includes(prefCode) ? styles.prefecturesSelected : ''}`}
+                onClick={() => handleDivClick(prefCode)}
+              >
                 <input
                   type="checkbox"
                   id={`pref-${prefCode}`}
                   name="prefectures"
                   value={prefCode}
+                  checked={selectedPrefCodes.includes(prefCode)}
                   onChange={(e) => handleCheckboxChange(prefCode, e.target.checked)}
                 />
-                <label htmlFor={`pref-${prefCode}`}>{prefName}</label>
+                {/* Remove htmlFor to avoid onClick bubbling */}
+                {/* <label htmlFor={`pref-${prefCode}`}>{prefName}</label> */}
+                <label>{prefName}</label>
               </div>
             ))}
           </div>
           <div className={styles.contentRight}>
-            <div>
+            <div className={styles.labelContainer}>
               <label>
                 <input
                   type="radio"
