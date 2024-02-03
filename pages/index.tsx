@@ -23,7 +23,11 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await getRESAS('/api/v1/prefectures')
-      setPrefectures(response.result || [])
+      if (response && response.result) {
+        setPrefectures(response.result)
+      } else {
+        setPrefectures([])
+      }
     }
 
     fetchData()
@@ -85,7 +89,10 @@ export default function Home() {
               <div
                 key={prefCode}
                 className={`${styles.prefectures} ${selectedPrefCodes.includes(prefCode) ? styles.prefecturesSelected : ''}`}
-                onClick={() => handleDivClick(prefCode)}
+                onClick={(e) => {
+                  e.preventDefault() // 기본 이벤트 방지
+                  handleCheckboxChange(prefCode, !selectedPrefCodes.includes(prefCode))
+                }}
               >
                 <input
                   type="checkbox"
@@ -93,11 +100,11 @@ export default function Home() {
                   name="prefectures"
                   value={prefCode}
                   checked={selectedPrefCodes.includes(prefCode)}
-                  onChange={(e) => handleCheckboxChange(prefCode, e.target.checked)}
+                  // onChange={(e) => handleCheckboxChange(prefCode, e.target.checked)}
                 />
                 {/* Remove htmlFor to avoid onClick bubbling */}
-                {/* <label htmlFor={`pref-${prefCode}`}>{prefName}</label> */}
-                <label>{prefName}</label>
+                <label htmlFor={`pref-${prefCode}`}>{prefName}</label>
+                {/* <label>{prefName}</label> */}
               </div>
             ))}
           </div>
