@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "vitest"
   },
   "dependencies": {
     "highcharts": "^11.3.0",
@@ -17,12 +18,16 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@testing-library/react": "^14.2.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
+    "jsdom": "^24.0.0",
     "prettier": "^3.2.4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^1.2.2"
   }
 }
